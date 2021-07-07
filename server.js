@@ -1,12 +1,13 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+//const bodyParser = require("body-parser");
 const cors = require("cors");
+const tutorialRouter = require("./app/routes/tutorial.routes");
 
 const app = express();
 
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "*"
 };
 
 app.use(cors(corsOptions));
@@ -23,14 +24,19 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to express and postgres application." });
+app.post("/", (req, res) => {
+  const name = req.body.name;
+  res.json({ message: "Welcome "+ name });
 });
 
-require("./app/routes/turorial.routes")(app);
+app.use('/api/tutorials', tutorialRouter);
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8060;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
+});
+process.on("unhandledRejection",(error)=>{
+  console.error(error)
 });
